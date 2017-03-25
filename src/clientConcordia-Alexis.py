@@ -20,7 +20,7 @@ class HockeyClient(LineReceiver, object):
         self.enemy_goal=None
         self.owns_power_up=False
         self.power_up_position=None
-
+        self.power_up_exists=True
 
 
 
@@ -36,7 +36,7 @@ class HockeyClient(LineReceiver, object):
              for j in range(max(y-1,0),min(y+1,10)):
 	            if not(self.is_wall(pt1) and self.is_wall((i,j))):
                       neighbours.append((i,j))
-	
+
         return  neighbours
 
 
@@ -106,8 +106,8 @@ class HockeyClient(LineReceiver, object):
             temp=self.enemy_goal
             self.enemy_goal=self.goal
             self.goal=self.enemy_goal
-        
-        
+
+
 
         if 'did go' in line:
             words=line.split()
@@ -168,6 +168,13 @@ class HockeyClient(LineReceiver, object):
                     moveScore+=0.5
                 if (new_x,new_y) in self.enemy_goal:
                     moveScore+=5.0
+                if power_up_exists:
+                    distToPowerup = distance(power_up_position[0], power_up_position[1])
+                    if moveScore <= 1
+                        moveScore += 0.5
+                    else:
+                        moveScore -= distToPowerup*0.1
+
                 min_dist=self.distance_goals((new_x,new_y))
                 moveScore-=min_dist
                 possibleMovesScores.append(moveScore)
