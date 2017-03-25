@@ -148,14 +148,14 @@ class HockeyClient(LineReceiver, object):
 
         return (any(self.board[x][y]) or x==11 or y==11 or x==0 or y==0)
 
-    def distance_goals(self,pt=self.current_pos,is_enemy_goal=True):
-	    return min([distance(pt,goal_pt) for goal_pt in self.enemy_goal])
+    def distance_goals(self,pt,is_enemy_goal=True):
+	    return min([self.distance(pt,goal_pt) for goal_pt in self.enemy_goal])
 
     def distance(self,pt1,pt2):
         return max([abs(pt1[0]-pt2[0]),abs(pt1[1]-pt2[1])])
 
     def min_distance_power_up(self):
-        return min([distance(
+        return 0
 
     def play_game(self):
         possibleMovesScores = []
