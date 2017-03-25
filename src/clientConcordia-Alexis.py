@@ -30,17 +30,19 @@ class HockeyClient(LineReceiver, object):
     def get_neighbours(self,pt1):
         neighbours=[]
         (x,y)=pt1
-        for i in range(max(x-1,0),min(x+1,10)):
-            for j in range(max(y-1,0),min(y+1,10)):
-                if not (self.is_wall(pt1) and self.is_wall((i,j))):
-                    neighbours.append((i,j))
+        for i in range(max(x-1,0),min(x+1,14)+1):
+            for j in range(max(y-1,0),min(y+1,14)+1):
+                if not (i==x and j==y):
+                    if not (self.is_wall(pt1) and self.is_wall((i,j))):
+                        neighbours.append((i,j))
         return neighbours
 
 
     def get_move_idx(self,pt1,pt2):
         try:
-            return [x for x, y in enumerate(move_cheat) if (y[0] == pt1[0]-pt2[0] and y[1] == pt1[1]-pt2[1])] 
-        except ValueError:
+            print("{}:{}".format(pt2[0]-pt1[0],pt2[1]-pt1[1]))
+            return [x for x,y in enumerate(move_cheat) if ((y[0]==(pt2[0]-pt1[0])) and (y[1]==(pt2[1]-pt1[1])))][0]
+        except IndexError:
             print("Move index not found")
             return 10
 
@@ -135,7 +137,7 @@ class HockeyClient(LineReceiver, object):
             self.current_pos=(self.current_pos[0]+move[0],self.current_pos[1]+move[1])
             print("{}".format(self.current_pos))
             self.get_neighbours(self.current_pos)
-
+            
             self.board[self.current_pos[0]-move[0]][self.current_pos[1]-move[1]][move_cheat.index(move)]=True
 
 
