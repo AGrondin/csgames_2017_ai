@@ -19,56 +19,12 @@ class HockeyClient(LineReceiver, object):
         self.goal=None
         self.enemy_goal=None
 
-        for i in range(11):
-            self.board[i][0]=[True for x in range(8)]
-            self.board[i][10]=[True for x in range(8)]
-            if i==4:
-                self.board[i][0][0]=False
-                self.board[i][0][6]=False
-                self.board[i][0][7]=False
-                self.board[i][10][4]=False
-                self.board[i][10][5]=False
-                self.board[i][10][6]=False
-            elif i==6:
-                self.board[i][0][0]=False
-                self.board[i][0][1]=False
-                self.board[i][0][2]=False
-                self.board[i][10][2]=False
-                self.board[i][10][3]=False
-                self.board[i][10][4]=False
-            else:
-                self.board[i][0][0]=False
-                self.board[i][0][1]=False
-                self.board[i][0][2]=False
-                self.board[i][0][6]=False
-                self.board[i][0][7]=False
-                self.board[i][10][2]=False
-                self.board[i][10][3]=False
-                self.board[i][10][4]=False
-                self.board[i][10][5]=False
-                self.board[i][10][6]=False
 
-        for i in range(11):
-
-            self.board[0][i]=[True for x in range(8)]
-            self.board[10][i]=[True for x in range(8)]
-
-            self.board[0][i][0]=False
-            self.board[0][i][4]=False
-            self.board[0][i][5]=False
-            self.board[0][i][6]=False
-            self.board[0][i][7]=False
-
-            self.board[10][i][0]=False
-            self.board[10][i][4]=False
-            self.board[10][i][5]=False
-            self.board[10][i][6]=False
-            self.board[10][i][7]=False
 
 
     def is_wall(self,pt):
     	is_side_wall=pt[0] not in [0,10]  
-	is_bottom_wall=pt[1] not in [0,10] or pt[0] in [4,5,6] 	
+	is_bottom_wall=pt[1] not in [0,10] and pt[0] not in [4,5,6] 	
 
     def get_neighbours(self,pt1):
 	x,y=pt1
@@ -97,6 +53,7 @@ class HockeyClient(LineReceiver, object):
             return occupied
         except IndexError:
             return False
+
 
     def get_possible_moves(self,point):
         moves=[]
