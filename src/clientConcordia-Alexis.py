@@ -67,22 +67,9 @@ class HockeyClient(LineReceiver, object):
 
 
     def get_neighbours(self,pt1):
-	x,y=pt1
+	    x,y=pt1
         neighbours=[self.board[i][j] for i in range(max(x-1,0),min(x+1,10)) for j in range(max(y-1,0),min(y+1,10))]
-	
-	return neighbours
-
-    def get_move_idx(self,pt1,pt2):
-        try:
-            return move_cheat.index((pt1[0]-pt2[0],pt1[1]-pt2[1]))    
-        except:
-            return -1
-    
-    def get_position(self,pt):
-        return self.board[pt[0]][pt[1]]
-
-    def get_edge_available(self,pt1,pt2):
-        return self.board[pt1
+	    return neighbours
 
     def connectionMade(self):
         self.sendLine(self.name)
@@ -155,6 +142,28 @@ class HockeyClient(LineReceiver, object):
 
         return (any(self.board[x][y]) or x==11 or y==11 or x==0 or y==0)
 
+    def cascadeRicochets(self,x,y):
+        values = [0]*3
+        goalY = self.enemy_goal[1][1]
+
+        direction = 0;
+        if y-goalY > 0:
+            direction = -1
+        else:
+            direction = 1
+        if self.canMakeMove(x-1,y+direction):
+            if self.can_ricochet(x-1, y+direction):
+                values[0] += max(cascadeRicochets(x-1, y+direction))
+        if self.canMakeMove(x,y+direction):
+            if self.can_ricochet(x, y+direction):
+                values[1] += max(cascadeRicochets(x, y+direction))
+        if self.canMakeMove(x+1,y+direction):
+            if self.can_ricochet(x+1, y+direction):
+                values[2] += max(cascadeRicochets(x+1, y+direction))
+        return values
+
+
+
     def play_game(self):
         possibleMovesScores = []
 
@@ -164,7 +173,8 @@ class HockeyClient(LineReceiver, object):
                 moveScore=0
                 (new_x,new_y)=self.getNextMove(x,y)
                 if self.can_ricochet(new_x, new_y):
-                    moveScore+=0.5
+                    moveScore = max(cascadeRicochets(new_x, new_y))
+                    #moveScore+=0.5
                 if (new_x,new_y) in self.enemy_goal:
                     moveScore+=5.0
                 min_dist=abs(new_x-self.enemy_goal[0][0])+abs(new_y-self.enemy_goal[0][1])
