@@ -27,17 +27,18 @@ class HockeyClient(LineReceiver, object):
 
     def is_wall(self,pt):
         is_side_wall=pt[0] in [0,14]
-        is_bottom_wall=pt[1] in [0,14] and pt[0] not in [6,7,8]
+        is_bottom_wall=pt[1] in [0,14] and (pt[0] not in [6,7,8])
         return is_side_wall or is_bottom_wall
 
-   def get_neighbours(self,pt1):
+    def get_neighbours(self,pt1):
         neighbours=[]
         (x,y)=pt1
-        for i in range(max(x-1,0),min(x+1,10)):
-            for j in range(max(y-1,0),min(y+1,10)):
-	            if not(self.is_wall(pt1) and self.is_wall((i,j))):
+        for i in range(max(x-1,0),min(x+1,14)+1):
+            for j in range(max(y-1,0),min(y+1,14)+1):
+                #print("{0},{1}".format(i,j))
+                if not(self.is_wall(pt1) and self.is_wall((i,j))):
                     neighbours.append((i,j))
-	
+        #print(neighbours)
         return neighbours
 
 
@@ -94,7 +95,7 @@ class HockeyClient(LineReceiver, object):
                 self.goal=[(6,15),(7,15),(8,15)]
             elif "south" in line:
                 self.goal=[(6,-1),(7,-1),(8,-1)]
-                self.enemy_goal=[(6,15),7,15),(8,15)]
+                self.enemy_goal=[(6,15),(7,15),(8,15)]
 
         elif '{} is active player'.format(self.name) in line or 'invalid move' in line:
             if 'invalid move' in line:
@@ -107,18 +108,18 @@ class HockeyClient(LineReceiver, object):
             temp=copy.deepcopy(self.enemy_goal)
             self.enemy_goal=copy.deepcopy(self.goal)
             self.goal=temp
-           
-        
-        
-        if 'power up is at' in line: 
+
+
+
+        if 'power up is at' in line:
             words=line.split('(')[1]
             words=words.split(')')[0]
             posits=words.split(',')
             self.power_up_exists=True
             self.powerupLocation=(int(posits[0]),int(posits[1]))
 
-            print("Current:{}".format(self.current_pos))
-        
+            print("power up location:{}".format(self.powerupLocation))
+
 
         if 'did go' in line:
             words=line.split()
@@ -134,6 +135,7 @@ class HockeyClient(LineReceiver, object):
 
             self.current_pos=(self.current_pos[0]+move[0],self.current_pos[1]+move[1])
             print("{}".format(self.current_pos))
+            self.get_neighbours(self.current_pos)
 
             self.board[self.current_pos[0]-move[0]][self.current_pos[1]-move[1]][move_cheat.index(move)]=True
 
