@@ -72,6 +72,18 @@ class HockeyClient(LineReceiver, object):
 	
 	return neighbours
 
+    def get_move_idx(self,pt1,pt2):
+        try:
+            return move_cheat.index((pt1[0]-pt2[0],pt1[1]-pt2[1]))    
+        except:
+            return -1
+    
+    def get_position(self,pt):
+        return self.board[pt[0]][pt[1]]
+
+    def get_edge_available(self,pt1,pt2):
+        return self.board[pt1
+
     def connectionMade(self):
         self.sendLine(self.name)
 
