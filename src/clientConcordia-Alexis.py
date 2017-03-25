@@ -84,11 +84,11 @@ class HockeyClient(LineReceiver, object):
 
         elif self.goal is None and "your goal is" in line:
             if "north" in line:
-                self.enemy_goal=[(4,-1),(5,-1)]
-                self.goal=[(4,12),(5,12)]
+                self.enemy_goal=[(4,-1),(5,-1),(6,-1)]
+                self.goal=[(4,11),(5,11),(6,11)]
             elif "south" in line:
-                self.goal=[(4,-1),(5,-1)]
-                self.enemy_goal=[(4,12),(5,12)]
+                self.goal=[(4,-1),(5,-1),(6,-1)]
+                self.enemy_goal=[(4,11),(5,11),(6,11)]
 
         elif '{} is active player'.format(self.name) in line or 'invalid move' in line:
             if 'invalid move' in line:
@@ -136,7 +136,7 @@ class HockeyClient(LineReceiver, object):
         return (any(self.board[x][y]) or x==11 or y==11 or x==0 or y==0)
 
     def distance_goals(self,pt,is_enemy_goal=True):
-	for 
+	    return min([max([abs(pt[0]-goal_pt[0]),abs(pt[1]-goal_pt[1])]) for goal_pt in enemy_goal])
 
     def play_game(self):
         possibleMovesScores = []
@@ -150,7 +150,7 @@ class HockeyClient(LineReceiver, object):
                     moveScore+=0.5
                 if (new_x,new_y) in self.enemy_goal:
                     moveScore+=5.0
-                min_dist=min([max(new_x-self.enemy_goal[0][0])+abs(new_y-self.enemy_goal[0][1])
+                min_dist=self.distance_goals((new_x,new_y))
                 moveScore-=min_dist
                 possibleMovesScores.append(moveScore)
             else:
