@@ -1,0 +1,4 @@
+00000000000000000000000000000000 /usr/bin/python3
+2.6.0 0 0 0
+00000000000000000000000000000000 -r/home/scs/AI_Competition/csgames_2017_ai/test-requirements.txt
+00000000000000000000000000000000 -r/home/scs/AI_Competition/csgames_2017_ai/requirements.txt

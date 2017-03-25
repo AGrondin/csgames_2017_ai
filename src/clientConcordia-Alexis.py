@@ -1,5 +1,6 @@
 import random
 import re
+import copy
 from twisted.internet import protocol
 from twisted.internet import reactor
 from twisted.protocols.basic import LineReceiver
@@ -19,22 +20,22 @@ class HockeyClient(LineReceiver, object):
         self.goal=None
         self.enemy_goal=None
         self.owns_power_up=False
-        self.power_up_position=None
+        self.powerupLocation=None
 
     def is_wall(self,pt):
-        is_side_wall = pt[0] in [0,15]
-        is_bottom_wall = pt[1] in [0,15] and pt[0] not in [6,7,8]
+        is_side_wall=pt[0] in [0,15]
+        is_bottom_wall=pt[1] in [0,15] and pt[0] not in [6,7,8]
         return is_side_wall or is_bottom_wall
 
     def get_neighbours(self,pt1):
-        x,y=pt1
-        #Not walls
+	    x,y=pt1
+        
         neighbours=[]
         for i in range(max(x-1,0),min(x+1,10)):
             for j in range(max(y-1,0),min(y+1,10)):
                 if not (self.is_wall(pt1) and self.is_wall((i,j))):
                     neighbours.append((i,j))
-
+	
         return neighbours
 
 
@@ -101,9 +102,20 @@ class HockeyClient(LineReceiver, object):
                 self.play_game()
 
         if 'polarity' in line:
-            temp=self.enemy_goal
-            self.enemy_goal=self.goal
-            self.goal=self.enemy_goal
+            temp=copy.deepcopy(self.enemy_goal)
+            self.enemy_goal=copy.deepcopy(self.goal)
+            self.goal=temp
+           
+        
+        if 'power up is at' in line: 
+            words=line.split('(')[1]
+            words=words.split(')')[0]
+            posits=words.split(',')
+            self.power_up_exists=True
+            self.powerupLocation=(int(posits[0]),int(posits[1]))
+
+            print("Current:{}".format(self.current_pos))
+        
 
         if 'did go' in line:
             words=line.split()
@@ -177,9 +189,10 @@ class HockeyClient(LineReceiver, object):
 
         best_move=possibleMovesScores.index(max(possibleMovesScores))
 
+		result = Action.from_number(best_move)
         print(self.current_pos)
+		print(result)
 
-        result = Action.from_number(best_move)
         self.sendLine(result)
 
 

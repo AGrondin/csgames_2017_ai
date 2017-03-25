@@ -1,0 +1,40 @@
+actionid: tox
+msg: packaging
+cmdargs: ['/usr/bin/python3', local('/home/scs/AI_Competition/csgames_2017_ai/setup.py'), 'sdist', '--formats=zip', '--dist-dir', local('/home/scs/AI_Competition/csgames_2017_ai/.tox/dist')]
+env: None
+
+running sdist
+running egg_info
+creating ai_pen.egg-info
+writing ai_pen.egg-info/PKG-INFO
+writing top-level names to ai_pen.egg-info/top_level.txt
+writing dependency_links to ai_pen.egg-info/dependency_links.txt
+writing manifest file 'ai_pen.egg-info/SOURCES.txt'
+reading manifest file 'ai_pen.egg-info/SOURCES.txt'
+writing manifest file 'ai_pen.egg-info/SOURCES.txt'
+warning: sdist: standard file not found: should have one of README, README.rst, README.txt
+
+running check
+warning: check: missing required meta-data: url
+
+warning: check: missing meta-data: either (author and author_email) or (maintainer and maintainer_email) must be supplied
+
+creating ai-pen-0.0.0
+creating ai-pen-0.0.0/ai_pen.egg-info
+making hard links in ai-pen-0.0.0...
+hard linking setup.py -> ai-pen-0.0.0
+hard linking ai_pen.egg-info/PKG-INFO -> ai-pen-0.0.0/ai_pen.egg-info
+hard linking ai_pen.egg-info/SOURCES.txt -> ai-pen-0.0.0/ai_pen.egg-info
+hard linking ai_pen.egg-info/dependency_links.txt -> ai-pen-0.0.0/ai_pen.egg-info
+hard linking ai_pen.egg-info/top_level.txt -> ai-pen-0.0.0/ai_pen.egg-info
+Writing ai-pen-0.0.0/setup.cfg
+creating .tox/dist
+creating '.tox/dist/ai-pen-0.0.0.zip' and adding 'ai-pen-0.0.0' to it
+adding 'ai-pen-0.0.0/setup.py'
+adding 'ai-pen-0.0.0/PKG-INFO'
+adding 'ai-pen-0.0.0/setup.cfg'
+adding 'ai-pen-0.0.0/ai_pen.egg-info/SOURCES.txt'
+adding 'ai-pen-0.0.0/ai_pen.egg-info/top_level.txt'
+adding 'ai-pen-0.0.0/ai_pen.egg-info/PKG-INFO'
+adding 'ai-pen-0.0.0/ai_pen.egg-info/dependency_links.txt'
+removing 'ai-pen-0.0.0' (and everything under it)
