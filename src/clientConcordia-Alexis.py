@@ -22,8 +22,8 @@ class HockeyClient(LineReceiver, object):
         self.power_up_position=None
 
     def is_wall(self,pt):
-        is_side_wall=pt[0] not in [0,15]
-        is_bottom_wall=pt[1] not in [0,15] and pt[0] not in [6,7,8]
+        is_side_wall = pt[0] in [0,15]
+        is_bottom_wall = pt[1] in [0,15] and pt[0] not in [6,7,8]
         return is_side_wall or is_bottom_wall
 
     def get_neighbours(self,pt1):
@@ -104,8 +104,6 @@ class HockeyClient(LineReceiver, object):
             temp=self.enemy_goal
             self.enemy_goal=self.goal
             self.goal=self.enemy_goal
-        
-        
 
         if 'did go' in line:
             words=line.split()
@@ -135,15 +133,14 @@ class HockeyClient(LineReceiver, object):
                 return True
             can_move= not self.board[self.current_pos[0]][self.current_pos[1]][move_cheat.index((x,y))]
             newx,newy=(self.getNextMove(x,y))
-            if newx==11 or newy==11 or newx==0 or newy==0:
+            if newx==15 or newy==15 or newx==0 or newy==0:
                 return False
             return can_move
         except IndexError:
             return False
 
     def can_ricochet(self,x,y):
-
-        return (any(self.board[x][y]) or x==11 or y==11 or x==0 or y==0)
+        return self.is_wall((x, y)) or any(self.board[x][y])
 
     def distance_goals(self,pt,is_enemy_goal=True):
 	    return min([self.distance(pt,goal_pt) for goal_pt in self.enemy_goal])
@@ -165,10 +162,13 @@ class HockeyClient(LineReceiver, object):
             if self.canMakeMove(x,y):
                 moveScore=0
                 (new_x,new_y)=self.getNextMove(x,y)
+
                 if self.can_ricochet(new_x, new_y):
                     moveScore+=0.5
+
                 if (new_x,new_y) in self.enemy_goal:
                     moveScore+=5.0
+
                 min_dist=self.distance_goals((new_x,new_y))
                 moveScore-=min_dist
                 possibleMovesScores.append(moveScore)
@@ -177,10 +177,9 @@ class HockeyClient(LineReceiver, object):
 
         best_move=possibleMovesScores.index(max(possibleMovesScores))
 
-        result = Action.from_number(best_move)
         print(self.current_pos)
-        print(result)
 
+        result = Action.from_number(best_move)
         self.sendLine(result)
 
 
