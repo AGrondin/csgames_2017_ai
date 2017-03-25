@@ -134,8 +134,13 @@ class HockeyClient(LineReceiver, object):
 
         return (any(self.board[x][y]) or x==11 or y==11 or x==0 or y==0)
 
+<<<<<<< Updated upstream
     def distance_goals(self,pt,is_enemy_goal=True):
-	    return min([max([abs(pt[0]-goal_pt[0]),abs(pt[1]-goal_pt[1])]) for goal_pt in self.enemy_goal])
+	    return min([max([abs(pt[0]-goal_pt[0]),abs(pt[1]-goal_pt[1])]) for goal_pt in enemy_goal])
+=======
+    '''def distance_goals(self,pt,is_enemy_goal=True):
+	for''' 
+>>>>>>> Stashed changes
 
     def play_game(self):
         possibleMovesScores = []
@@ -152,8 +157,13 @@ class HockeyClient(LineReceiver, object):
                     moveScore+=0.5
                 if (new_x,new_y) in self.enemy_goal:
                     moveScore+=5.0
+<<<<<<< Updated upstream
                 min_dist=self.distance_goals((new_x,new_y))
                 moveScore-=min_dist
+=======
+                min_dist=min([max(new_x-self.enemy_goal[0][0])+abs(new_y-self.enemy_goal[0][1])])
+                moveScore=moveScore-min_dist
+>>>>>>> Stashed changes
                 possibleMovesScores.append(moveScore)
             else:
                 possibleMovesScores.append(-1000)
