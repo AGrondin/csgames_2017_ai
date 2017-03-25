@@ -23,14 +23,13 @@ class HockeyClient(LineReceiver, object):
         self.powerupLocation=None
 
     def is_wall(self,pt):
-        is_side_wall=pt[0] in [0,15]
-        is_bottom_wall=pt[1] in [0,15] and pt[0] not in [6,7,8]
+        is_side_wall=pt[0] in [0,14]
+        is_bottom_wall=pt[1] in [0,14] and pt[0] not in [6,7,8]
         return is_side_wall or is_bottom_wall
 
-    def get_neighbours(self,pt1):
-	    x,y=pt1
-        
+   def get_neighbours(self,pt1):
         neighbours=[]
+        (x,y)=pt1
         for i in range(max(x-1,0),min(x+1,10)):
             for j in range(max(y-1,0),min(y+1,10)):
                 if not (self.is_wall(pt1) and self.is_wall((i,j))):
