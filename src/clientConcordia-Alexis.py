@@ -50,7 +50,7 @@ class HockeyClient(LineReceiver, object):
         try:
             occupied = self.get_position(pt1)[self.get_move_idx(pt1,pt2)]\
                        or self.get_position(pt2)[self.get_move_idx(pt2,pt1)]
-            return occupied
+            return not occupied
         except IndexError:
             return False
 
@@ -135,6 +135,9 @@ class HockeyClient(LineReceiver, object):
 
         return (any(self.board[x][y]) or x==11 or y==11 or x==0 or y==0)
 
+    def distance_goals(self,pt,is_enemy_goal=True):
+	for 
+
     def play_game(self):
         possibleMovesScores = []
 
@@ -147,7 +150,7 @@ class HockeyClient(LineReceiver, object):
                     moveScore+=0.5
                 if (new_x,new_y) in self.enemy_goal:
                     moveScore+=5.0
-                min_dist=abs(new_x-self.enemy_goal[0][0])+abs(new_y-self.enemy_goal[0][1])
+                min_dist=min([max(new_x-self.enemy_goal[0][0])+abs(new_y-self.enemy_goal[0][1])
                 moveScore-=min_dist
                 possibleMovesScores.append(moveScore)
             else:
