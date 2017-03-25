@@ -15,14 +15,14 @@ class HockeyClient(LineReceiver, object):
         self.start_pos=None
         self.current_pos=(0,0)
         self.debug = debug
-        self.board=[[[False for x in range(8)] for i in range(11)] for i in range(11)]
+        self.board=[[[False for x in range(8)] for i in range(15)] for i in range(15)]
         self.goal=None
         self.enemy_goal=None
 
     def is_wall(self,pt):
-        is_side_wall=pt[0] not in [0,10]  
-        is_bottom_wall=pt[1] not in [0,10] and pt[0] not in [4,5,6]
-        return is_side_wall or is_bottom_wall
+        is_side_wall=pt[0] not in [0,15]
+		is_bottom_wall=pt[1] not in [0,15] and pt[0] not in [6,7,8]
+        return is_side_wall or is_bottom_wall]
 
     def get_neighbours(self,pt1):
         x,y=pt1
@@ -32,7 +32,7 @@ class HockeyClient(LineReceiver, object):
             for j in range(max(y-1,0),min(y+1,10)):
                 if not (self.is_wall(pt1) and self.is_wall((i,j))):
                     neighbours.append((i,j))
-
+	
         return  neighbours
 
 
@@ -85,11 +85,11 @@ class HockeyClient(LineReceiver, object):
 
         elif self.goal is None and "your goal is" in line:
             if "north" in line:
-                self.enemy_goal=[(4,-1),(5,-1),(6,-1)]
-                self.goal=[(4,11),(5,11),(6,11)]
+                self.enemy_goal=[(6,-1),(7,-1),(8,-1)]
+                self.goal=[(6,15),(7,15),(8,15)]
             elif "south" in line:
-                self.goal=[(4,-1),(5,-1),(6,-1)]
-                self.enemy_goal=[(4,11),(5,11),(6,11)]
+                self.goal=[(6,-1),(7,-1),(8,-1)]
+                self.enemy_goal=[(6,15),7,15),(8,15)]
 
         elif '{} is active player'.format(self.name) in line or 'invalid move' in line:
             if 'invalid move' in line:
@@ -97,6 +97,9 @@ class HockeyClient(LineReceiver, object):
                 self.sendLine(result)
             else:
                 self.play_game()
+
+        if 'polarity' in line:
+            temp
 
         if 'did go' in line:
             words=line.split()
