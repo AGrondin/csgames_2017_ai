@@ -24,17 +24,16 @@ class HockeyClient(LineReceiver, object):
 
     def is_wall(self,pt):
         is_side_wall=pt[0] in [0,14]
-        is_bottom_wall=pt[1] in [0,14] and pt[0] not in [6,7,8]
+        is_bottom_wall=pt[1] in [0,14] and (pt[0] not in [6,7,8])
         return is_side_wall or is_bottom_wall
 
-   def get_neighbours(self,pt1):
+    def get_neighbours(self,pt1):
         neighbours=[]
         (x,y)=pt1
         for i in range(max(x-1,0),min(x+1,10)):
             for j in range(max(y-1,0),min(y+1,10)):
                 if not (self.is_wall(pt1) and self.is_wall((i,j))):
                     neighbours.append((i,j))
-	
         return neighbours
 
 
@@ -104,17 +103,17 @@ class HockeyClient(LineReceiver, object):
             temp=copy.deepcopy(self.enemy_goal)
             self.enemy_goal=copy.deepcopy(self.goal)
             self.goal=temp
-           
-        
-        if 'power up is at' in line: 
+
+
+        if 'power up is at' in line:
             words=line.split('(')[1]
             words=words.split(')')[0]
             posits=words.split(',')
             self.power_up_exists=True
             self.powerupLocation=(int(posits[0]),int(posits[1]))
 
-            print("Current:{}".format(self.current_pos))
-        
+            print("power up location:{}".format(self.powerupLocation))
+
 
         if 'did go' in line:
             words=line.split()
@@ -130,6 +129,7 @@ class HockeyClient(LineReceiver, object):
 
             self.current_pos=(self.current_pos[0]+move[0],self.current_pos[1]+move[1])
             print("{}".format(self.current_pos))
+            self.get_neighbours(self.current_pos)
 
             self.board[self.current_pos[0]-move[0]][self.current_pos[1]-move[1]][move_cheat.index(move)]=True
 
@@ -151,7 +151,11 @@ class HockeyClient(LineReceiver, object):
             return False
 
     def can_ricochet(self,x,y):
-        return self.is_wall((x, y)) or any(self.board[x][y])
+        try:
+            ricochet=(self.is_wall((x,y)) or any(self.board[x][y]))
+            return ricochet
+        except IndexError:
+            return False
 
     def distance_goals(self,pt,is_enemy_goal=True):
 	    return min([self.distance(pt,goal_pt) for goal_pt in self.enemy_goal])
@@ -164,9 +168,6 @@ class HockeyClient(LineReceiver, object):
 
     def play_game(self):
         possibleMovesScores = []
-
-        print("Moves:")
-        print(self.get_possible_moves(self.current_pos))
 
         for val in Action.Name.values():
             (x,y)=Action.move[val]
