@@ -176,27 +176,25 @@ class HockeyClient(LineReceiver, object):
                 moveScore=0
                 (new_x,new_y)=self.getNextMove(x,y)
                 if self.can_ricochet(new_x, new_y):
-                    moveScore += 0.5
-                    isCheckmate = True
-                    for neighbour in self.get_neighbours(new_x, new_y):
-                        if self.canMakeMoveFromPos(new_x, new_y, neighbour[0], neighbour[1]):
-                            isCheckmate = False
-                            if self.can_ricochet(neighbour[0], neighbour[1]):
-                                moveScore+=0.01
-                    if isCheckmate:
+                    if len(get_possible_moves(new_x, new_y)) == 0:
                         moveScore = -2000
+                    else:
+                        moveScore += 0.5
+                        for neighbour in self.get_neighbours(new_x, new_y):
+                            if self.canMakeMoveFromPos(new_x, new_y, neighbour[0], neighbour[1]):
+                                if self.can_ricochet(neighbour[0], neighbour[1]):
+                                    moveScore+=0.01
                 else:
-                    isCheckmate = True
-                    for neighbour in self.get_neighbours(new_x, new_y):
-                        if self.canMakeMoveFromPos(new_x, new_y, neighbour[0], neighbour[1]):
-                            isCheckmate = False
-                            if self.can_ricochet(neighbour[0], neighbour[1]):
-                                moveScore-=0.01
-                    if isCheckmate: #This code is probably never called
-                        moveScore = 100
+                    if len(get_possible_moves(new_x, new_y)) == 0: #This code is probably never called
+                        moveScore += 5.0
+                    else:
+                        for neighbour in self.get_neighbours(new_x, new_y):
+                            if self.canMakeMoveFromPos(new_x, new_y, neighbour[0], neighbour[1]):
+                                if self.can_ricochet(neighbour[0], neighbour[1]):
+                                    moveScore-=0.01
 
                 if (new_x,new_y) in self.enemy_goal:
-                    moveScore+=5.0
+                    moveScore += 50.0
                 if power_up_exists:
                     distToPowerup = distance(power_up_position[0], power_up_position[1])
                     if moveScore <= 1
