@@ -44,10 +44,15 @@ class HockeyClient(LineReceiver, object):
 
     def get_move_idx(self,pt1,pt2):
         try:
-            return move_cheat.index((pt1[0]-pt2[0],pt1[1]-pt2[1]))
+            return [x for x, y in enumerate(move_cheat) if (y[0] == pt1[0]-pt2[0] and y[1] == pt1[1]-pt2[1])] 
         except ValueError:
             print("Move index not found")
             return 10
+
+    def get_move(self,pt1,pt2):
+
+        return (pt1[0]-pt2[0],pt1[1]-pt2[1])
+
 
     def get_position(self,pt):
         return self.board[pt[0]][pt[1]]
@@ -67,7 +72,7 @@ class HockeyClient(LineReceiver, object):
 
         for pt in self.get_neighbours(point):
             if self.get_edge_available(point,pt):
-                moves.append(self.get_move_idx(point,pt))
+                moves.append(self.get_move(point,pt))
 
         return moves
 
@@ -162,6 +167,7 @@ class HockeyClient(LineReceiver, object):
             return ricochet
         except IndexError:
             return False
+
     def distance_goals(self,pt,is_enemy_goal=True):
 	    return min([self.distance(pt,goal_pt) for goal_pt in self.enemy_goal])
 
