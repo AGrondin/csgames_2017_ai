@@ -19,20 +19,19 @@ class HockeyClient(LineReceiver, object):
         self.goal=None
         self.enemy_goal=None
 
-
-
-
     def is_wall(self,pt):
-    	is_side_wall=pt[0] not in [0,10]  
-	is_bottom_wall=pt[1] not in [0,10] and pt[0] not in [4,5,6] 	
+        is_side_wall=pt[0] not in [0,10]  
+        is_bottom_wall=pt[1] not in [0,10] and pt[0] not in [4,5,6]
+        return is_side_wall or is_bottom_wall
 
     def get_neighbours(self,pt1):
-	x,y=pt1
+        x,y=pt1
         #Not walls
         neighbours=[]
-        for i in range(max(x-1,0),min(x+1,10)) for j in range(max(y-1,0),min(y+1,10)):
-	    if not (self.is_wall(pt1) and self.is_wall((i,j)):
-                neighbours.append((i,j))
+        for i in range(max(x-1,0),min(x+1,10)):
+            for j in range(max(y-1,0),min(y+1,10)):
+                if not (self.is_wall(pt1) and self.is_wall((i,j))):
+                    neighbours.append((i,j))
 	
         return  neighbours
           
@@ -140,6 +139,9 @@ class HockeyClient(LineReceiver, object):
 
     def play_game(self):
         possibleMovesScores = []
+
+        print("Moves:")
+        print(self.get_possible_moves(self.current_pos))
 
         for val in Action.Name.values():
             (x,y)=Action.move[val]
