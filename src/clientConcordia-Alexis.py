@@ -178,7 +178,7 @@ class HockeyClient(LineReceiver, object):
                 if self.can_ricochet(new_x, new_y):
                     moveScore += 0.5
                     isCheckmate = True
-                    for neighbour in self.get_neighbours():
+                    for neighbour in self.get_neighbours(new_x, new_y):
                         if self.canMakeMoveFromPos(new_x, new_y, neighbour[0], neighbour[1]):
                             isCheckmate = False
                             if self.can_ricochet(neighbour[0], neighbour[1]):
@@ -187,7 +187,7 @@ class HockeyClient(LineReceiver, object):
                         moveScore = -2000
                 else:
                     isCheckmate = True
-                    for neighbour in self.get_neighbours():
+                    for neighbour in self.get_neighbours(new_x, new_y):
                         if self.canMakeMoveFromPos(new_x, new_y, neighbour[0], neighbour[1]):
                             isCheckmate = False
                             if self.can_ricochet(neighbour[0], neighbour[1]):
