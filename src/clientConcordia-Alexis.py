@@ -168,10 +168,11 @@ class HockeyClient(LineReceiver, object):
 
     def play_game(self):
         possibleMovesScores = []
+        possibleMoves = self.get_possible_moves(self.current_pos)
 
         for val in Action.Name.values():
             (x,y)=Action.move[val]
-            if self.canMakeMove(x,y):
+            if (x,y) in possibleMoves:
                 moveScore=0
                 (new_x,new_y)=self.getNextMove(x,y)
 
@@ -189,9 +190,7 @@ class HockeyClient(LineReceiver, object):
 
         best_move=possibleMovesScores.index(max(possibleMovesScores))
 
-		result = Action.from_number(best_move)
-        print(self.current_pos)
-		print(result)
+        result = Action.from_number(best_move)
 
         self.sendLine(result)
 
