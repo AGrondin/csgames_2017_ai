@@ -143,8 +143,19 @@ class HockeyClient(LineReceiver, object):
         except IndexError:
             return False
 
-    def can_ricochet(self,x,y):
+    def canMakeMoveFromPos(self,initX,initY,x,y):
+        try:
+            if (initX+x,initY+y) in self.enemy_goal:
+                return True
+            can_move= not self.board[initX][initY][move_cheat.index((x,y))]
+            newx,newy=(self.getNextMove(x,y))
+            if newx==11 or newy==11 or newx==0 or newy==0:
+                return False
+            return can_move
+        except IndexError:
+            return False
 
+    def can_ricochet(self,x,y):
         return (any(self.board[x][y]) or x==11 or y==11 or x==0 or y==0)
 
     def distance_goals(self,pt,is_enemy_goal=True):
@@ -165,14 +176,24 @@ class HockeyClient(LineReceiver, object):
                 moveScore=0
                 (new_x,new_y)=self.getNextMove(x,y)
                 if self.can_ricochet(new_x, new_y):
-                    moveScore+=0.5
+                    moveScore += 0.5
+                    isCheckmate = True
                     for neighbour in self.get_neighbours():
-                        if self.can_ricochet(neighbour[0], neighbour[1]):
-                            moveScore+=0.01
+                        if self.canMakeMoveFromPos(new_x, new_y, neighbour[0], neighbour[1]):
+                            isCheckmate = False
+                            if self.can_ricochet(neighbour[0], neighbour[1]):
+                                moveScore+=0.01
+                    if isCheckmate:
+                        moveScore = -2000
                 else:
+                    isCheckmate = True
                     for neighbour in self.get_neighbours():
-                        if self.can_ricochet(neighbour[0], neighbour[1]):
-                            moveScore-=0.01
+                        if self.canMakeMoveFromPos(new_x, new_y, neighbour[0], neighbour[1]):
+                            isCheckmate = False
+                            if self.can_ricochet(neighbour[0], neighbour[1]):
+                                moveScore-=0.01
+                    if isCheckmate: #This code is probably never called
+                        moveScore = 100
 
                 if (new_x,new_y) in self.enemy_goal:
                     moveScore+=5.0
