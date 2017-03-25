@@ -24,7 +24,7 @@ class HockeyClient(LineReceiver, object):
 
     def is_wall(self,pt):
         is_side_wall=pt[0] in [0,14]
-        is_bottom_wall=pt[1] in [0,14] and (pt[0] not in [6,7,8])
+        is_bottom_wall=pt[1] in [0,14] and (pt[0]!=7)
         return is_side_wall or is_bottom_wall
 
     def get_neighbours(self,pt1):
@@ -40,7 +40,7 @@ class HockeyClient(LineReceiver, object):
 
     def get_move_idx(self,pt1,pt2):
         try:
-            print("{}:{}".format(pt2[0]-pt1[0],pt2[1]-pt1[1]))
+            #print("{}:{}".format(pt2[0]-pt1[0],pt2[1]-pt1[1]))
             return [x for x,y in enumerate(move_cheat) if ((y[0]==(pt2[0]-pt1[0])) and (y[1]==(pt2[1]-pt1[1])))][0]
         except IndexError:
             print("Move index not found")
@@ -48,7 +48,7 @@ class HockeyClient(LineReceiver, object):
 
     def get_move(self,pt1,pt2):
 
-        return (pt1[0]-pt2[0],pt1[1]-pt2[1])
+        return (pt2[0]-pt1[0],pt2[1]-pt1[1])
 
 
     def get_position(self,pt):
@@ -137,7 +137,7 @@ class HockeyClient(LineReceiver, object):
             self.current_pos=(self.current_pos[0]+move[0],self.current_pos[1]+move[1])
             print("{}".format(self.current_pos))
             self.get_neighbours(self.current_pos)
-            
+
             self.board[self.current_pos[0]-move[0]][self.current_pos[1]-move[1]][move_cheat.index(move)]=True
 
 
@@ -165,7 +165,7 @@ class HockeyClient(LineReceiver, object):
             return False
 
     def distance_goals(self,pt,is_enemy_goal=True):
-	    return min([self.distance(pt,goal_pt) for goal_pt in self.enemy_goal])
+	    return self.distance(pt,self.enemy_goal[1])
 
     def distance(self,pt1,pt2):
         return max([abs(pt1[0]-pt2[0]),abs(pt1[1]-pt2[1])])
@@ -198,6 +198,8 @@ class HockeyClient(LineReceiver, object):
         best_move=possibleMovesScores.index(max(possibleMovesScores))
 
         result = Action.from_number(best_move)
+        print("moving:{}:{}\n".format(self.current_pos[0],self.current_pos[1]))
+        print(result)
 
         self.sendLine(result)
 

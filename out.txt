@@ -1,0 +1,3 @@
+Server said: What's your name?
+Server said: Welcome, MacroHard-Conco629 you're player 1!
+Connection lost - goodbye!
