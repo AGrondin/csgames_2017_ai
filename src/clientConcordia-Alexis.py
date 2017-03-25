@@ -66,10 +66,10 @@ class HockeyClient(LineReceiver, object):
             self.board[10][i][7]=False
 
 
-    def get_neighbours(self,pt1):
+    '''def get_neighbours(self,pt1):
 	    x,y=pt1
         neighbours=[self.board[i][j] for i in range(max(x-1,0),min(x+1,10)) for j in range(max(y-1,0),min(y+1,10))]
-	    return neighbours
+	    return neighbours'''
 
     def connectionMade(self):
         self.sendLine(self.name)
@@ -139,30 +139,30 @@ class HockeyClient(LineReceiver, object):
             return False
 
     def can_ricochet(self,x,y):
+        return x>=11 or y>=11 or x<=0 or y<=0 or (any(self.board[x][y]))
 
-        return (any(self.board[x][y]) or x==11 or y==11 or x==0 or y==0)
-
-    def cascadeRicochets(self,x,y):
+    def cascadeRicochets(self,x,y,depth):
         values = [0]*3
         goalY = self.enemy_goal[1][1]
+
+        if depth == 4:
+            return values
 
         direction = 0;
         if y-goalY > 0:
             direction = -1
         else:
             direction = 1
-        if self.canMakeMove(x-1,y+direction):
+        if self.canMakeMove(-1,direction):
             if self.can_ricochet(x-1, y+direction):
-                values[0] += max(cascadeRicochets(x-1, y+direction))
-        if self.canMakeMove(x,y+direction):
+                values[0] += max(self.cascadeRicochets(x-1, y+direction, depth+1))+1
+        if self.canMakeMove(0,direction):
             if self.can_ricochet(x, y+direction):
-                values[1] += max(cascadeRicochets(x, y+direction))
-        if self.canMakeMove(x+1,y+direction):
+                values[1] += max(self.cascadeRicochets(x, y+direction, depth+1))+1
+        if self.canMakeMove(1,direction):
             if self.can_ricochet(x+1, y+direction):
-                values[2] += max(cascadeRicochets(x+1, y+direction))
+                values[2] += max(self.cascadeRicochets(x+1, y+direction, depth+1))+1
         return values
-
-
 
     def play_game(self):
         possibleMovesScores = []
@@ -173,8 +173,7 @@ class HockeyClient(LineReceiver, object):
                 moveScore=0
                 (new_x,new_y)=self.getNextMove(x,y)
                 if self.can_ricochet(new_x, new_y):
-                    moveScore = max(cascadeRicochets(new_x, new_y))
-                    #moveScore+=0.5
+                    moveScore+=0.5
                 if (new_x,new_y) in self.enemy_goal:
                     moveScore+=5.0
                 min_dist=abs(new_x-self.enemy_goal[0][0])+abs(new_y-self.enemy_goal[0][1])

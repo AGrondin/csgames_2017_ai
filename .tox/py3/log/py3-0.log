@@ -1,0 +1,10 @@
+actionid: py3
+msg: getenv
+cmdargs: ['/usr/bin/python', '-m', 'virtualenv', '--python', '/usr/local/bin/python3', 'py3']
+env: {'LESS': '-R', 'VERSIONER_PYTHON_PREFER_32_BIT': 'no', 'LC_CTYPE': 'en_CA.UTF-8', 'TERM_PROGRAM_VERSION': '388', 'LOGNAME': 'benjaminbarault', 'USER': 'benjaminbarault', 'HOME': '/Users/benjaminbarault', 'PATH': '/Users/benjaminbarault/Desktop/CSGamesAI/csgames_2017_ai/.tox/py3/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin', 'ZSH': '/Users/benjaminbarault/.oh-my-zsh', 'DISPLAY': '/private/tmp/com.apple.launchd.w98LCIumEp/org.macosforge.xquartz:0', 'TERM_PROGRAM': 'Apple_Terminal', 'LANG': 'en_CA.UTF-8', 'TERM': 'xterm-256color', 'Apple_PubSub_Socket_Render': '/private/tmp/com.apple.launchd.ZUMvPONZQ4/Render', 'VERSIONER_PYTHON_VERSION': '2.7', 'SHLVL': '1', 'XPC_FLAGS': '0x0', 'PYTHONHASHSEED': '492230231', 'TMPDIR': '/var/folders/1r/2jks9t7n6qq1b6_jrtxgthqc0000gn/T/', 'TERM_SESSION_ID': '9C2A91F0-1F0A-4640-8A23-63D089F53FDB', 'XPC_SERVICE_NAME': '0', 'SSH_AUTH_SOCK': '/private/tmp/com.apple.launchd.EDafChw228/Listeners', 'VIRTUAL_ENV': '/Users/benjaminbarault/Desktop/CSGamesAI/csgames_2017_ai/.tox/py3', 'SHELL': '/bin/zsh', '_': '/usr/local/bin/tox', 'LSCOLORS': 'Gxfxcxdxbxegedabagacad', 'OLDPWD': '/Users/benjaminbarault/Desktop/CSGamesAI', '__CF_USER_TEXT_ENCODING': '0x1F5:0x0:0x52', 'PWD': '/Users/benjaminbarault/Desktop/CSGamesAI/csgames_2017_ai', 'PAGER': 'less'}
+
+Using base prefix '/Library/Frameworks/Python.framework/Versions/3.5'
+New python executable in /Users/benjaminbarault/Desktop/CSGamesAI/csgames_2017_ai/.tox/py3/bin/python3
+Also creating executable in /Users/benjaminbarault/Desktop/CSGamesAI/csgames_2017_ai/.tox/py3/bin/python
+Installing setuptools, pip, wheel...done.
+Running virtualenv with interpreter /usr/local/bin/python3
