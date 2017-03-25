@@ -18,6 +18,8 @@ class HockeyClient(LineReceiver, object):
         self.board=[[[False for x in range(8)] for i in range(15)] for i in range(15)]
         self.goal=None
         self.enemy_goal=None
+        self.owns_power_up=False
+        self.power_up_position=None
 
     def is_wall(self,pt):
         is_side_wall=pt[0] not in [0,15]
@@ -102,7 +104,11 @@ class HockeyClient(LineReceiver, object):
                 self.play_game()
 
         if 'polarity' in line:
-            temp
+            temp=self.enemy_goal
+            self.enemy_goal=self.goal
+            self.goal=self.enemy_goal
+        
+        
 
         if 'did go' in line:
             words=line.split()
@@ -142,8 +148,14 @@ class HockeyClient(LineReceiver, object):
 
         return (any(self.board[x][y]) or x==11 or y==11 or x==0 or y==0)
 
-    def distance_goals(self,pt,is_enemy_goal=True):
-	    return min([max([abs(pt[0]-goal_pt[0]),abs(pt[1]-goal_pt[1])]) for goal_pt in self.enemy_goal])
+    def distance_goals(self,pt=self.current_pos,is_enemy_goal=True):
+	    return min([distance(pt,goal_pt) for goal_pt in self.enemy_goal])
+
+    def distance(self,pt1,pt2):
+        return max([abs(pt1[0]-pt2[0]),abs(pt1[1]-pt2[1])])
+
+    def min_distance_power_up(self):
+        return min([distance(
 
     def play_game(self):
         possibleMovesScores = []
