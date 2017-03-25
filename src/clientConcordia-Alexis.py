@@ -108,7 +108,7 @@ class HockeyClient(LineReceiver, object):
                 self.play_game()
 
         if 'polarity' in line:
-               
+
             temp=copy.deepcopy(self.enemy_goal)
             self.enemy_goal=copy.deepcopy(self.goal)
             self.goal=temp
@@ -182,6 +182,26 @@ class HockeyClient(LineReceiver, object):
     def min_distance_power_up(self):
         return 0
 
+    def cascadeRicochets(self,x,y):
+        values = [0]*3
+        goalY = self.enemy_goal[1][1]
+
+        direction = 0;
+        if y-goalY > 0:
+            direction = -1
+        else:
+            direction = 1
+        if self.canMakeMove(x-1,y+direction):
+            if self.can_ricochet(x-1, y+direction):
+                values[0] += max(cascadeRicochets(x-1, y+direction))
+        if self.canMakeMove(x,y+direction):
+            if self.can_ricochet(x, y+direction):
+                values[1] += max(cascadeRicochets(x, y+direction))
+        if self.canMakeMove(x+1,y+direction):
+            if self.can_ricochet(x+1, y+direction):
+                values[2] += max(cascadeRicochets(x+1, y+direction))
+        return values
+
     def play_game(self):
         possibleMovesScores = []
         possibleMoves = self.get_possible_moves(self.current_pos)
@@ -196,11 +216,12 @@ class HockeyClient(LineReceiver, object):
                     if len(self.get_possible_moves((new_x, new_y))) == 0:
                         moveScore = -2000
                     else:
-                        moveScore += 0.5
+                        moveScore = cascadeRicochets(new_x, new_y)
+                        '''moveScore += 0.5
                         for neighbour in self.get_neighbours((new_x, new_y)):
                             if self.canMakeMoveFromPos(new_x, new_y, neighbour[0]-new_x, neighbour[1]-new_y):
                                 if self.can_ricochet(neighbour[0], neighbour[1]):
-                                    moveScore+=0.01
+                                    moveScore+=0.01'''
                 else:
                     if len(self.get_possible_moves((new_x, new_y))) == 0: #This code is probably never called
                         moveScore += 5.0
@@ -211,7 +232,7 @@ class HockeyClient(LineReceiver, object):
                                     moveScore-=0.01
 
                 if (new_x,new_y) in self.enemy_goal:
-                    moveScore += 50.0
+                    moveScore += 500.0
                 if not (self.power_up_position is None):
                     distToPowerup = self.distance(self.current_pos, self.power_up_position)
                     if moveScore <= 1:
