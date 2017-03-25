@@ -1,5 +1,6 @@
 import random
 import re
+import copy
 from twisted.internet import protocol
 from twisted.internet import reactor
 from twisted.protocols.basic import LineReceiver
@@ -19,25 +20,26 @@ class HockeyClient(LineReceiver, object):
         self.goal=None
         self.enemy_goal=None
         self.owns_power_up=False
-        self.power_up_position=None
+        self.powerupLocation=None
 
 
 
 
     def is_wall(self,pt):
-    	is_side_wall=pt[0] not in [0,15]
-	is_bottom_wall=pt[1] not in [0,15] and pt[0] not in [6,7,8]
+        is_side_wall=pt[0] in [0,15]
+        is_bottom_wall=pt[1] in [0,15] and pt[0] not in [6,7,8]
+        return is_side_wall or is_bottom_wall
 
     def get_neighbours(self,pt1):
-	x,y=pt1
-        #Not walls
+	    x,y=pt1
+        
         neighbours=[]
         for i in range(max(x-1,0),min(x+1,10)):
-             for j in range(max(y-1,0),min(y+1,10)):
+            for j in range(max(y-1,0),min(y+1,10)):
 	            if not(self.is_wall(pt1) and self.is_wall((i,j))):
-                      neighbours.append((i,j))
+                    neighbours.append((i,j))
 	
-        return  neighbours
+        return neighbours
 
 
     def get_move_idx(self,pt1,pt2):
@@ -103,10 +105,20 @@ class HockeyClient(LineReceiver, object):
                 self.play_game()
 
         if 'polarity' in line:
-            temp=self.enemy_goal
-            self.enemy_goal=self.goal
-            self.goal=self.enemy_goal
+            temp=copy.deepcopy(self.enemy_goal)
+            self.enemy_goal=copy.deepcopy(self.goal)
+            self.goal=temp
+           
         
+        
+        if 'power up is at' in line: 
+            words=line.split('(')[1]
+            words=words.split(')')[0]
+            posits=words.split(',')
+            self.power_up_exists=True
+            self.powerupLocation=(int(posits[0]),int(posits[1]))
+
+            print("Current:{}".format(self.current_pos))
         
 
         if 'did go' in line:
@@ -137,16 +149,18 @@ class HockeyClient(LineReceiver, object):
                 return True
             can_move= not self.board[self.current_pos[0]][self.current_pos[1]][move_cheat.index((x,y))]
             newx,newy=(self.getNextMove(x,y))
-            if newx==11 or newy==11 or newx==0 or newy==0:
+            if newx==15 or newy==15 or newx==0 or newy==0:
                 return False
             return can_move
         except IndexError:
             return False
 
     def can_ricochet(self,x,y):
-
-        return (any(self.board[x][y]) or x==11 or y==11 or x==0 or y==0)
-
+        try:
+            ricochet=(self.is_wall((x,y)) or any(self.board[x][y]))
+            return ricochet
+        except IndexError:
+            return False
     def distance_goals(self,pt,is_enemy_goal=True):
 	    return min([self.distance(pt,goal_pt) for goal_pt in self.enemy_goal])
 
