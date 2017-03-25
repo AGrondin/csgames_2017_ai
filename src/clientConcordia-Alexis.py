@@ -80,17 +80,12 @@ class HockeyClient(LineReceiver, object):
 	
         return  neighbours
           
-             
-    
-    def get_neighbour_pts(self,pt1):
-        x,y=pt1
-        neighbours=[(i,j) for i in range(max(x-1,0),min(x+1,10)) for j in range(max(y-1,0),min(y+1,10))]
-
+            
     def get_move_idx(self,pt1,pt2):
         try:
             return move_cheat.index((pt1[0]-pt2[0],pt1[1]-pt2[1]))    
         except ValueError:
-            return -1
+            return 10
     
     def get_position(self,pt):
         return self.board[pt[0]][pt[1]]
@@ -106,7 +101,7 @@ class HockeyClient(LineReceiver, object):
     def get_possible_moves(self,point):
         moves=[]
         
-        for pt in self.get_neighbour_pts(point):
+        for pt in self.get_neighbours(point):
             if self.get_edge_available(point,pt):
                 moves.append(self.get_move_idx(point,pt))
    	
