@@ -15,9 +15,57 @@ class HockeyClient(LineReceiver, object):
         self.start_pos=None
         self.current_pos=(0,0)
         self.debug = debug
-        self.board=[[[False for x in range(6)] for i in range(11)] for i in range(11)]
+        self.board=[[[False for x in range(8)] for i in range(11)] for i in range(11)]
         self.goal=None
         self.enemy_goal=None
+
+        for i in range(11):
+            self.board[i][0]=[True for x in range(8)]
+            self.board[i][10]=[True for x in range(8)]
+            if i==4:
+                self.board[i][0][0]=False
+                self.board[i][0][6]=False
+                self.board[i][0][7]=False
+                self.board[i][10][4]=False
+                self.board[i][10][5]=False
+                self.board[i][10][6]=False
+            elif i==6:
+                self.board[i][0][0]=False
+                self.board[i][0][1]=False
+                self.board[i][0][2]=False
+                self.board[i][10][2]=False
+                self.board[i][10][3]=False
+                self.board[i][10][4]=False
+            else:
+                self.board[i][0][0]=False
+                self.board[i][0][1]=False
+                self.board[i][0][2]=False
+                self.board[i][0][6]=False
+                self.board[i][0][7]=False
+                self.board[i][10][2]=False
+                self.board[i][10][3]=False
+                self.board[i][10][4]=False
+                self.board[i][10][5]=False
+                self.board[i][10][6]=False
+
+        for i in range(11):
+
+            self.board[0][i]=[True for x in range(8)]
+            self.board[10][i]=[True for x in range(8)]
+
+            self.board[0][i][0]=False
+            self.board[0][i][4]=False
+            self.board[0][i][5]=False
+            self.board[0][i][6]=False
+            self.board[0][i][7]=False
+
+            self.board[10][i][0]=False
+            self.board[10][i][4]=False
+            self.board[10][i][5]=False
+            self.board[10][i][6]=False
+            self.board[10][i][7]=False
+
+
 
 
 
@@ -41,11 +89,11 @@ class HockeyClient(LineReceiver, object):
 
         elif self.goal is None and "your goal is" in line:
             if "north" in line:
-                self.goal=[(4,-1),(5,-1)]
-                self.enemy_goal=[(4,12),(5,12)]
-            elif "south" in line:
                 self.enemy_goal=[(4,-1),(5,-1)]
                 self.goal=[(4,12),(5,12)]
+            elif "south" in line:
+                self.goal=[(4,-1),(5,-1)]
+                self.enemy_goal=[(4,12),(5,12)]
 
         elif '{} is active player'.format(self.name) in line or 'invalid move' in line:
             if 'invalid move' in line:
@@ -68,10 +116,9 @@ class HockeyClient(LineReceiver, object):
 
             self.current_pos=(self.current_pos[0]+move[0],self.current_pos[1]+move[1])
             print("{}".format(self.current_pos))
-            try:
-                self.board[self.current_pos[0]-move[0]][self.current_pos[1]-move[1]][move_cheat.index(move)]=True
-            except IndexError:
-                pass
+
+            self.board[self.current_pos[0]-move[0]][self.current_pos[1]-move[1]][move_cheat.index(move)]=True
+
 
 
     def getNextMove(self,x,y):
@@ -139,7 +186,7 @@ class ClientFactory(protocol.ClientFactory):
         reactor.stop()
 
 
-name = "Bob{}".format(random.randint(0, 999))
+name = "MacroHard-Conco{}".format(random.randint(0, 999))
 
 f = ClientFactory(name, debug=True)
 reactor.connectTCP("localhost", 8023, f)
