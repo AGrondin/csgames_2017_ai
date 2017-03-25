@@ -21,8 +21,8 @@ class HockeyClient(LineReceiver, object):
 
     def is_wall(self,pt):
         is_side_wall=pt[0] not in [0,15]
-		is_bottom_wall=pt[1] not in [0,15] and pt[0] not in [6,7,8]
-        return is_side_wall or is_bottom_wall]
+        is_bottom_wall=pt[1] not in [0,15] and pt[0] not in [6,7,8]
+        return is_side_wall or is_bottom_wall
 
     def get_neighbours(self,pt1):
         x,y=pt1
@@ -33,7 +33,10 @@ class HockeyClient(LineReceiver, object):
                 if not (self.is_wall(pt1) and self.is_wall((i,j))):
                     neighbours.append((i,j))
 	
-        return  neighbours
+        if len(neighbours) == 0:
+            print("No neighbours")
+
+        return neighbours
 
 
     def get_move_idx(self,pt1,pt2):
@@ -89,7 +92,7 @@ class HockeyClient(LineReceiver, object):
                 self.goal=[(6,15),(7,15),(8,15)]
             elif "south" in line:
                 self.goal=[(6,-1),(7,-1),(8,-1)]
-                self.enemy_goal=[(6,15),7,15),(8,15)]
+                self.enemy_goal=[(6,15),(7,15),(8,15)]
 
         elif '{} is active player'.format(self.name) in line or 'invalid move' in line:
             if 'invalid move' in line:
