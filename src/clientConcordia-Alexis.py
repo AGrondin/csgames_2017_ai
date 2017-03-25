@@ -23,8 +23,8 @@ class HockeyClient(LineReceiver, object):
 
 
     def is_wall(self,pt):
-    	is_side_wall=pt[0] not in [0,10]  
-	is_bottom_wall=pt[1] not in [0,10] and pt[0] not in [4,5,6] 	
+    	is_side_wall=pt[0] not in [0,10]
+	is_bottom_wall=pt[1] not in [0,10] and pt[0] not in [4,5,6]
 
     def get_neighbours(self,pt1):
 	x,y=pt1
@@ -33,16 +33,17 @@ class HockeyClient(LineReceiver, object):
         for i in range(max(x-1,0),min(x+1,10)) for j in range(max(y-1,0),min(y+1,10)):
 	    if not (self.is_wall(pt1) and self.is_wall((i,j)):
                 neighbours.append((i,j))
-	
+
         return  neighbours
-          
-            
+
+
     def get_move_idx(self,pt1,pt2):
         try:
-            return move_cheat.index((pt1[0]-pt2[0],pt1[1]-pt2[1]))    
+            return move_cheat.index((pt1[0]-pt2[0],pt1[1]-pt2[1]))
         except ValueError:
+            print("Move index not found")
             return 10
-    
+
     def get_position(self,pt):
         return self.board[pt[0]][pt[1]]
 
@@ -52,16 +53,17 @@ class HockeyClient(LineReceiver, object):
                        or self.get_position(pt2)[self.get_move_idx(pt2,pt1)]
             return not occupied
         except IndexError:
+            print("Move not found")
             return False
 
 
     def get_possible_moves(self,point):
         moves=[]
-        
+
         for pt in self.get_neighbours(point):
             if self.get_edge_available(point,pt):
                 moves.append(self.get_move_idx(point,pt))
-   	
+
         return moves
 
     def connectionMade(self):
@@ -136,7 +138,7 @@ class HockeyClient(LineReceiver, object):
         return (any(self.board[x][y]) or x==11 or y==11 or x==0 or y==0)
 
     def distance_goals(self,pt,is_enemy_goal=True):
-	    return min([max([abs(pt[0]-goal_pt[0]),abs(pt[1]-goal_pt[1])]) for goal_pt in enemy_goal])
+	    return min([max([abs(pt[0]-goal_pt[0]),abs(pt[1]-goal_pt[1])]) for goal_pt in self.enemy_goal])
 
     def play_game(self):
         possibleMovesScores = []
