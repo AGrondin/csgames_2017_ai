@@ -166,6 +166,14 @@ class HockeyClient(LineReceiver, object):
                 (new_x,new_y)=self.getNextMove(x,y)
                 if self.can_ricochet(new_x, new_y):
                     moveScore+=0.5
+                    for neighbour in self.get_neighbours():
+                        if self.can_ricochet(neighbour[0], neighbour[1]):
+                            moveScore+=0.01
+                else:
+                    for neighbour in self.get_neighbours():
+                        if self.can_ricochet(neighbour[0], neighbour[1]):
+                            moveScore-=0.01
+
                 if (new_x,new_y) in self.enemy_goal:
                     moveScore+=5.0
                 if power_up_exists:
@@ -173,7 +181,7 @@ class HockeyClient(LineReceiver, object):
                     if moveScore <= 1
                         moveScore += 0.5
                     else:
-                        moveScore -= distToPowerup*0.1
+                        moveScore -= distToPowerup*0.001
 
                 min_dist=self.distance_goals((new_x,new_y))
                 moveScore-=min_dist
