@@ -66,23 +66,51 @@ class HockeyClient(LineReceiver, object):
             self.board[10][i][7]=False
 
 
+    def is_wall(self,pt):
+    	is_side_wall=pt[0] not in [0,10]  
+	is_bottom_wall=pt[1] not in [0,10] or pt[0] in [4,5,6] 	
+
     def get_neighbours(self,pt1):
 	x,y=pt1
-        neighbours=[self.board[i][j] for i in range(max(x-1,0),min(x+1,10)) for j in range(max(y-1,0),min(y+1,10))]
+        #Not walls
+        neighbours=[]
+        for i in range(max(x-1,0),min(x+1,10)) for j in range(max(y-1,0),min(y+1,10)):
+	    if not (self.is_wall(pt1) and self.is_wall((i,j)):
+                neighbours.append((i,j))
 	
-	return neighbours
+        return  neighbours
+          
+             
+    
+    def get_neighbour_pts(self,pt1):
+        x,y=pt1
+        neighbours=[(i,j) for i in range(max(x-1,0),min(x+1,10)) for j in range(max(y-1,0),min(y+1,10))]
 
     def get_move_idx(self,pt1,pt2):
         try:
             return move_cheat.index((pt1[0]-pt2[0],pt1[1]-pt2[1]))    
-        except:
+        except ValueError:
             return -1
     
     def get_position(self,pt):
         return self.board[pt[0]][pt[1]]
 
     def get_edge_available(self,pt1,pt2):
-        return self.board[pt1
+        try:
+            occupied = self.get_position(pt1)[self.get_move_idx(pt1,pt2)]\
+                       or self.get_position(pt2)[self.get_move_idx(pt2,pt1)]
+            return occupied
+        except IndexError:
+            return False
+
+    def get_possible_moves(self,point):
+        moves=[]
+        
+        for pt in self.get_neighbour_pts(point):
+            if self.get_edge_available(point,pt):
+                moves.append(self.get_move_idx(point,pt))
+   	
+        return moves
 
     def connectionMade(self):
         self.sendLine(self.name)
