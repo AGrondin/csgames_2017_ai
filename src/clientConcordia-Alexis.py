@@ -34,9 +34,6 @@ class HockeyClient(LineReceiver, object):
             for j in range(max(y-1,0),min(y+1,10)):
                 if not (self.is_wall(pt1) and self.is_wall((i,j))):
                     neighbours.append((i,j))
-	
-        if len(neighbours) == 0:
-            print("No neighbours")
 
         return neighbours
 
