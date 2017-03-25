@@ -21,7 +21,6 @@ class HockeyClient(LineReceiver, object):
         self.enemy_goal=None
         self.owns_power_up=False
         self.power_up_position=None
-        self.power_up_exists=True
 
 
     def is_wall(self,pt):
@@ -31,6 +30,8 @@ class HockeyClient(LineReceiver, object):
 
     def get_neighbours(self,pt1):
         (x,y)=pt1
+        neighbours = []
+
         for i in range(max(x-1,0),min(x+1,14)+1):
             for j in range(max(y-1,0),min(y+1,14)+1):
                 if not (i==x and j==y):
@@ -116,11 +117,7 @@ class HockeyClient(LineReceiver, object):
             words=line.split('(')[1]
             words=words.split(')')[0]
             posits=words.split(',')
-            self.power_up_exists=True
-            self.powerupLocation=(int(posits[0]),int(posits[1]))
-
-            print("power up location:{}".format(self.powerupLocation))
-
+            self.power_up_position=(int(posits[0].strip()),int(posits[1].strip()))
 
         if 'did go' in line:
             words=line.split()
@@ -139,8 +136,6 @@ class HockeyClient(LineReceiver, object):
             self.get_neighbours(self.current_pos)
 
             self.board[self.current_pos[0]-move[0]][self.current_pos[1]-move[1]][move_cheat.index(move)]=True
-
-
 
     def getNextMove(self,x,y):
         return (self.current_pos[0]+x,self.current_pos[1]+y)
@@ -198,28 +193,28 @@ class HockeyClient(LineReceiver, object):
                 (new_x,new_y)=self.getNextMove(x,y)
 
                 if self.can_ricochet(new_x, new_y):
-                    if len(get_possible_moves(new_x, new_y)) == 0:
+                    if len(self.get_possible_moves((new_x, new_y))) == 0:
                         moveScore = -2000
                     else:
                         moveScore += 0.5
-                        for neighbour in self.get_neighbours(new_x, new_y):
-                            if self.canMakeMoveFromPos(new_x, new_y, neighbour[0], neighbour[1]):
+                        for neighbour in self.get_neighbours((new_x, new_y)):
+                            if self.canMakeMoveFromPos(new_x, new_y, neighbour[0]-new_x, neighbour[1]-new_y):
                                 if self.can_ricochet(neighbour[0], neighbour[1]):
                                     moveScore+=0.01
                 else:
-                    if len(get_possible_moves(new_x, new_y)) == 0: #This code is probably never called
+                    if len(self.get_possible_moves((new_x, new_y))) == 0: #This code is probably never called
                         moveScore += 5.0
                     else:
-                        for neighbour in self.get_neighbours(new_x, new_y):
-                            if self.canMakeMoveFromPos(new_x, new_y, neighbour[0], neighbour[1]):
+                        for neighbour in self.get_neighbours((new_x, new_y)):
+                            if self.canMakeMoveFromPos(new_x, new_y, neighbour[0]-new_x, neighbour[1]-new_y):
                                 if self.can_ricochet(neighbour[0], neighbour[1]):
                                     moveScore-=0.01
 
                 if (new_x,new_y) in self.enemy_goal:
                     moveScore += 50.0
-                if power_up_exists:
-                    distToPowerup = distance(power_up_position[0], power_up_position[1])
-                    if moveScore <= 1
+                if not (self.power_up_position is None):
+                    distToPowerup = self.distance(self.current_pos, self.power_up_position)
+                    if moveScore <= 1:
                         moveScore += 0.5
                     else:
                         moveScore -= distToPowerup*0.001
@@ -237,7 +232,6 @@ class HockeyClient(LineReceiver, object):
         print(result)
 
         self.sendLine(result)
-
 
 class ClientFactory(protocol.ClientFactory):
     def __init__(self, name, debug):
@@ -257,8 +251,7 @@ class ClientFactory(protocol.ClientFactory):
             print("Connection lost - goodbye!")
         reactor.stop()
 
-
-name = "MacroHard-Conco{}".format(random.randint(0, 999))
+name = "MacroHard_iter2-Conco{}".format(random.randint(0, 999))
 
 f = ClientFactory(name, debug=True)
 reactor.connectTCP("localhost", 8023, f)
