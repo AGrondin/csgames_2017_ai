@@ -66,8 +66,11 @@ class HockeyClient(LineReceiver, object):
             self.board[10][i][7]=False
 
 
-
-
+    def get_neighbours(self,pt1):
+	x,y=pt1
+        neighbours=[self.board[i][j] for i in range(max(x-1,0),min(x+1,10)) for j in range(max(y-1,0),min(y+1,10))]
+	
+	return neighbours
 
     def connectionMade(self):
         self.sendLine(self.name)
